@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
@@ -16,31 +17,34 @@ import { Button } from '@/components/ui/button';
 
 const navigation = {
   admin: [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Órdenes', href: '/orders', icon: FileText },
-    { name: 'Nueva Orden', href: '/orders/new', icon: TrendingUp },
-    { name: 'Entregas', href: '/deliveries', icon: Truck },
-    { name: 'Proveedores', href: '/providers', icon: Package },
-    { name: 'Usuarios', href: '/users', icon: Users },
-    { name: 'Reportes', href: '/reports', icon: BarChart3 },
-    { name: 'Configuración', href: '/settings', icon: Settings },
+    { name: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'nav.orders', href: '/orders', icon: FileText },
+    { name: 'nav.newOrder', href: '/orders/new', icon: TrendingUp },
+    { name: 'nav.deliveries', href: '/deliveries', icon: Truck },
+    { name: 'nav.providers', href: '/providers', icon: Package },
+    { name: 'nav.users', href: '/users', icon: Users },
+    { name: 'nav.reports', href: '/reports', icon: BarChart3 },
+    { name: 'nav.settings', href: '/settings', icon: Settings },
   ],
   proveedor: [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Mis Órdenes', href: '/orders', icon: FileText },
-    { name: 'Negociación', href: '/orders/new', icon: TrendingUp },
+    { name: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'nav.myOrders', href: '/orders', icon: FileText },
+    { name: 'nav.negotiation', href: '/orders/new', icon: TrendingUp },
+    { name: 'nav.settings', href: '/settings', icon: Settings },
   ],
   xquadra: [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Órdenes', href: '/orders', icon: FileText },
-    { name: 'Nueva Orden', href: '/orders/new', icon: TrendingUp },
-    { name: 'Entregas', href: '/deliveries', icon: Truck },
-    { name: 'Reportes', href: '/reports', icon: BarChart3 },
+    { name: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'nav.orders', href: '/orders', icon: FileText },
+    { name: 'nav.newOrder', href: '/orders/new', icon: TrendingUp },
+    { name: 'nav.deliveries', href: '/deliveries', icon: Truck },
+    { name: 'nav.reports', href: '/reports', icon: BarChart3 },
+    { name: 'nav.settings', href: '/settings', icon: Settings },
   ],
 };
 
 export function Sidebar() {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
   
   if (!user) return null;
@@ -79,7 +83,7 @@ export function Sidebar() {
                 )}
               >
                 <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-                {item.name}
+                {t(item.name)}
               </Link>
             );
           })}
@@ -104,7 +108,7 @@ export function Sidebar() {
             onClick={logout}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Cerrar Sesión
+            {t('nav.logout')}
           </Button>
         </div>
       </div>

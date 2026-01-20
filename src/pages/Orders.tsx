@@ -3,6 +3,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { OrdersTable } from '@/components/orders/OrdersTable';
 import { useOrders } from '@/hooks/useOrders';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +13,7 @@ import { OrderStatus } from '@/types';
 
 export default function Orders() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { orders } = useOrders();
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,7 +26,6 @@ export default function Orders() {
   });
 
   const handleExport = (format: 'csv' | 'pdf') => {
-    // Export functionality would be implemented here
     console.log(`Exporting as ${format}`);
   };
 
@@ -35,21 +36,21 @@ export default function Orders() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="font-display text-3xl font-semibold text-foreground">
-              {user?.role === 'proveedor' ? 'Mis Órdenes' : 'Gestión de Órdenes'}
+              {user?.role === 'proveedor' ? t('orders.myOrders') : t('orders.title')}
             </h1>
             <p className="mt-1 text-muted-foreground">
-              {filteredOrders.length} órdenes encontradas
+              {filteredOrders.length} {t('orders.found')}
             </p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => handleExport('csv')}>
               <Download className="mr-2 h-4 w-4" />
-              Exportar
+              {t('common.export')}
             </Button>
             <Link to="/orders/new">
               <Button variant="gold">
                 <Plus className="mr-2 h-4 w-4" />
-                Nueva Orden
+                {t('dashboard.newOrder')}
               </Button>
             </Link>
           </div>
@@ -60,7 +61,7 @@ export default function Orders() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Buscar por proveedor..."
+              placeholder={t('orders.searchProvider')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-surface-2 border-border"
@@ -69,12 +70,12 @@ export default function Orders() {
           <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as OrderStatus | 'all')}>
             <SelectTrigger className="w-full md:w-48 bg-surface-2 border-border">
               <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="Estado" />
+              <SelectValue placeholder={t('orders.status')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos los estados</SelectItem>
-              <SelectItem value="pending">Pendientes</SelectItem>
-              <SelectItem value="completed">Completadas</SelectItem>
+              <SelectItem value="all">{t('orders.allStatuses')}</SelectItem>
+              <SelectItem value="pending">{t('orders.pending')}</SelectItem>
+              <SelectItem value="completed">{t('orders.completed')}</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { demoProviders } from '@/data/providers';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Delivery } from '@/types';
 import { Plus, Truck, Package } from 'lucide-react';
 import { toast } from 'sonner';
@@ -46,6 +47,7 @@ const demoDeliveries: Delivery[] = [
 ];
 
 export default function Deliveries() {
+  const { t, language } = useLanguage();
   const [deliveries, setDeliveries] = useState<Delivery[]>(demoDeliveries);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newDelivery, setNewDelivery] = useState({
@@ -57,7 +59,7 @@ export default function Deliveries() {
   const handleCreateDelivery = () => {
     const provider = demoProviders.find(p => p.id === newDelivery.providerId);
     if (!provider) {
-      toast.error('Seleccione un proveedor');
+      toast.error(t('deliveries.errorProvider'));
       return;
     }
 
@@ -73,7 +75,7 @@ export default function Deliveries() {
     setDeliveries(prev => [delivery, ...prev]);
     setIsDialogOpen(false);
     setNewDelivery({ providerId: '', grams: 0, notes: '' });
-    toast.success('Entrega registrada exitosamente');
+    toast.success(t('deliveries.success'));
   };
 
   const totalGrams = deliveries.reduce((sum, d) => sum + d.grams, 0);
@@ -85,35 +87,35 @@ export default function Deliveries() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="font-display text-3xl font-semibold text-foreground">
-              Registro de Entregas
+              {t('deliveries.title')}
             </h1>
             <p className="mt-1 text-muted-foreground">
-              Gestiona las entregas de oro por proveedor
+              {t('deliveries.subtitle')}
             </p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="gold">
                 <Plus className="mr-2 h-4 w-4" />
-                Nueva Entrega
+                {t('deliveries.new')}
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border">
               <DialogHeader>
-                <DialogTitle className="font-display text-xl">Registrar Entrega</DialogTitle>
+                <DialogTitle className="font-display text-xl">{t('deliveries.register')}</DialogTitle>
                 <DialogDescription>
-                  Ingresa los datos de la nueva entrega de oro
+                  {t('deliveries.registerDesc')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div className="space-y-2">
-                  <Label>Proveedor</Label>
+                  <Label>{t('deliveries.provider')}</Label>
                   <Select
                     value={newDelivery.providerId}
                     onValueChange={(value) => setNewDelivery(prev => ({ ...prev, providerId: value }))}
                   >
                     <SelectTrigger className="bg-surface-2 border-border">
-                      <SelectValue placeholder="Seleccionar proveedor" />
+                      <SelectValue placeholder={t('deliveries.selectProvider')} />
                     </SelectTrigger>
                     <SelectContent>
                       {demoProviders.map((provider) => (
@@ -125,7 +127,7 @@ export default function Deliveries() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Cantidad (gramos)</Label>
+                  <Label>{t('deliveries.quantity')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -137,17 +139,17 @@ export default function Deliveries() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Notas</Label>
+                  <Label>{t('deliveries.notes')}</Label>
                   <Textarea
                     value={newDelivery.notes}
                     onChange={(e) => setNewDelivery(prev => ({ ...prev, notes: e.target.value }))}
                     className="bg-surface-2 border-border resize-none"
-                    placeholder="Observaciones de la entrega..."
+                    placeholder={t('deliveries.notesPlaceholder')}
                     rows={3}
                   />
                 </div>
                 <Button variant="gold" className="w-full" onClick={handleCreateDelivery}>
-                  Registrar Entrega
+                  {t('deliveries.registerBtn')}
                 </Button>
               </div>
             </DialogContent>
@@ -162,7 +164,7 @@ export default function Deliveries() {
                 <Truck className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Entregas</p>
+                <p className="text-sm text-muted-foreground">{t('deliveries.totalDeliveries')}</p>
                 <p className="font-display text-2xl font-semibold text-foreground">{deliveries.length}</p>
               </div>
             </div>
@@ -173,7 +175,7 @@ export default function Deliveries() {
                 <Package className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Gramos</p>
+                <p className="text-sm text-muted-foreground">{t('deliveries.totalGrams')}</p>
                 <p className="font-display text-2xl font-semibold text-foreground">{totalGrams.toFixed(2)}g</p>
               </div>
             </div>
@@ -184,7 +186,7 @@ export default function Deliveries() {
                 <Truck className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Proveedores Activos</p>
+                <p className="text-sm text-muted-foreground">{t('deliveries.activeProviders')}</p>
                 <p className="font-display text-2xl font-semibold text-foreground">
                   {new Set(deliveries.map(d => d.providerId)).size}
                 </p>
@@ -198,11 +200,11 @@ export default function Deliveries() {
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-muted-foreground">ID</TableHead>
-                <TableHead className="text-muted-foreground">Proveedor</TableHead>
-                <TableHead className="text-muted-foreground">Gramos</TableHead>
-                <TableHead className="text-muted-foreground">Fecha</TableHead>
-                <TableHead className="text-muted-foreground">Notas</TableHead>
+                <TableHead className="text-muted-foreground">{t('deliveries.id')}</TableHead>
+                <TableHead className="text-muted-foreground">{t('deliveries.provider')}</TableHead>
+                <TableHead className="text-muted-foreground">{t('orders.grams')}</TableHead>
+                <TableHead className="text-muted-foreground">{t('deliveries.date')}</TableHead>
+                <TableHead className="text-muted-foreground">{t('deliveries.notes')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -212,7 +214,7 @@ export default function Deliveries() {
                   <TableCell>{delivery.providerName}</TableCell>
                   <TableCell className="font-semibold">{delivery.grams.toFixed(2)} g</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {new Intl.DateTimeFormat('es-CO', {
+                    {new Intl.DateTimeFormat(language === 'es' ? 'es-CO' : 'en-US', {
                       day: '2-digit',
                       month: 'short',
                       year: 'numeric',

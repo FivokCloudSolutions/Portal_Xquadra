@@ -5,12 +5,14 @@ import { OrdersTable } from '@/components/orders/OrdersTable';
 import { usePriceData } from '@/hooks/usePriceData';
 import { useOrders } from '@/hooks/useOrders';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Coins, DollarSign, FileText, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { priceData, isLoading: priceLoading, refresh } = usePriceData();
   const { orders } = useOrders();
 
@@ -28,16 +30,16 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-display text-3xl font-semibold text-foreground">
-              Bienvenido, <span className="gold-text">{user?.name}</span>
+              {t('dashboard.welcome')}, <span className="gold-text">{user?.name}</span>
             </h1>
             <p className="mt-1 text-muted-foreground">
-              Resumen de actividad y precios en tiempo real
+              {t('dashboard.summary')}
             </p>
           </div>
           <Link to="/orders/new">
             <Button variant="gold" size="lg">
               <TrendingUp className="mr-2 h-4 w-4" />
-              Nueva Orden
+              {t('dashboard.newOrder')}
             </Button>
           </Link>
         </div>
@@ -45,7 +47,7 @@ export default function Dashboard() {
         {/* Live Prices */}
         <div className="grid gap-6 md:grid-cols-2">
           <PriceCard
-            title="Precio del Oro"
+            title={t('dashboard.goldPrice')}
             value={priceData.goldOunce}
             change={priceData.goldChange}
             unit="USD/oz"
@@ -54,7 +56,7 @@ export default function Dashboard() {
             onRefresh={refresh}
           />
           <PriceCard
-            title="Tasa de Cambio"
+            title={t('dashboard.exchangeRate')}
             value={priceData.dollarRate}
             change={priceData.dollarChange}
             unit="COP/USD"
@@ -67,26 +69,26 @@ export default function Dashboard() {
         {/* Stats Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
-            title="Órdenes Totales"
+            title={t('dashboard.totalOrders')}
             value={orders.length}
             icon={FileText}
-            trend={{ value: 12, label: 'este mes' }}
+            trend={{ value: 12, label: t('dashboard.thisMonth') }}
           />
           <StatsCard
-            title="Completadas"
+            title={t('dashboard.completed')}
             value={completedOrders}
             icon={CheckCircle}
             variant="success"
-            trend={{ value: 8, label: 'esta semana' }}
+            trend={{ value: 8, label: t('dashboard.thisWeek') }}
           />
           <StatsCard
-            title="Pendientes"
+            title={t('dashboard.pending')}
             value={pendingOrders}
             icon={Clock}
             variant="warning"
           />
           <StatsCard
-            title="Total Gramos"
+            title={t('dashboard.totalGrams')}
             value={`${totalGrams.toFixed(2)}g`}
             subtitle={new Intl.NumberFormat('es-CO', {
               style: 'currency',
@@ -102,10 +104,10 @@ export default function Dashboard() {
         <div>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-display text-xl font-semibold text-foreground">
-              Órdenes Recientes
+              {t('dashboard.recentOrders')}
             </h2>
             <Link to="/orders">
-              <Button variant="ghost">Ver todas</Button>
+              <Button variant="ghost">{t('common.viewAll')}</Button>
             </Link>
           </div>
           <OrdersTable 

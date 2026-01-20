@@ -1,30 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserRole } from '@/types';
 import { Loader2, Shield, Users, Briefcase } from 'lucide-react';
-
-const roleInfo = {
-  admin: {
-    label: 'Administrador',
-    description: 'Acceso completo a todas las funcionalidades',
-    icon: Shield,
-  },
-  proveedor: {
-    label: 'Proveedor',
-    description: 'Negociación de precios y órdenes',
-    icon: Briefcase,
-  },
-  xquadra: {
-    label: 'Usuario Xquadra',
-    description: 'Registro de entregas y reportes',
-    icon: Users,
-  },
-};
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -34,7 +17,26 @@ export default function Login() {
   const [error, setError] = useState('');
   
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
+
+  const roleInfo = {
+    admin: {
+      label: t('login.admin'),
+      description: t('login.adminDesc'),
+      icon: Shield,
+    },
+    proveedor: {
+      label: t('login.provider'),
+      description: t('login.providerDesc'),
+      icon: Briefcase,
+    },
+    xquadra: {
+      label: t('login.xquadra'),
+      description: t('login.xquadraDesc'),
+      icon: Users,
+    },
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +48,7 @@ export default function Login() {
     if (success) {
       navigate('/dashboard');
     } else {
-      setError('Credenciales inválidas. Use "demo123" como contraseña.');
+      setError(t('login.error'));
     }
     
     setIsLoading(false);
@@ -72,20 +74,20 @@ export default function Login() {
 
           {/* Welcome */}
           <div className="mb-8">
-            <h2 className="font-display text-3xl font-semibold text-foreground">Bienvenido</h2>
+            <h2 className="font-display text-3xl font-semibold text-foreground">{t('login.welcome')}</h2>
             <p className="mt-2 text-muted-foreground">
-              Ingresa tus credenciales para acceder a la plataforma
+              {t('login.subtitle')}
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
+              <Label htmlFor="email">{t('login.email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="tu@email.com"
+                placeholder={t('login.emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-12 bg-surface-2 border-border"
@@ -94,7 +96,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">{t('login.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -107,7 +109,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label>Tipo de usuario</Label>
+              <Label>{t('login.userType')}</Label>
               <Select value={role} onValueChange={(value: UserRole) => setRole(value)}>
                 <SelectTrigger className="h-12 bg-surface-2 border-border">
                   <SelectValue />
@@ -151,10 +153,10 @@ export default function Login() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Ingresando...
+                  {t('login.entering')}
                 </>
               ) : (
-                'Ingresar'
+                t('login.enter')
               )}
             </Button>
           </form>
@@ -162,7 +164,7 @@ export default function Login() {
           {/* Demo hint */}
           <div className="mt-8 rounded-lg border border-border bg-surface-2 p-4">
             <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">Demo:</span> Usa cualquier email y la contraseña{' '}
+              <span className="font-medium text-foreground">{t('login.demo')}</span> {t('login.demoHint')}{' '}
               <code className="rounded bg-surface-3 px-1.5 py-0.5 font-mono text-primary">demo123</code>
             </p>
           </div>
@@ -184,11 +186,11 @@ export default function Login() {
                 <span className="text-6xl font-bold text-primary-foreground">X</span>
               </div>
               <h3 className="font-display text-4xl font-semibold text-foreground">
-                Trading de<br />
-                <span className="gold-text">Oro Premium</span>
+                {t('login.tagline')}<br />
+                <span className="gold-text">{t('login.taglineGold')}</span>
               </h3>
               <p className="mt-4 max-w-xs text-muted-foreground">
-                Plataforma profesional para la negociación y gestión de transacciones de oro
+                {t('login.platformDesc')}
               </p>
             </div>
           </div>

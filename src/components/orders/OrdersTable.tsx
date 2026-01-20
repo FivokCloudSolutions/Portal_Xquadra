@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Table,
   TableBody,
@@ -20,16 +21,18 @@ interface OrdersTableProps {
 }
 
 export function OrdersTable({ orders, onViewOrder, onEditOrder, showProvider = true }: OrdersTableProps) {
+  const { t, language } = useLanguage();
+
   const formatCurrency = (value: number | null) => {
     if (value === null) return '—';
-    return new Intl.NumberFormat('es-CO', {
+    return new Intl.NumberFormat(language === 'es' ? 'es-CO' : 'en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(value);
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('es-CO', {
+    return new Intl.DateTimeFormat(language === 'es' ? 'es-CO' : 'en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -43,16 +46,16 @@ export function OrdersTable({ orders, onViewOrder, onEditOrder, showProvider = t
       <Table>
         <TableHeader>
           <TableRow className="border-border hover:bg-transparent">
-            <TableHead className="text-muted-foreground">ID</TableHead>
-            {showProvider && <TableHead className="text-muted-foreground">Proveedor</TableHead>}
-            <TableHead className="text-muted-foreground">Gramos</TableHead>
-            <TableHead className="text-muted-foreground">% Negociación</TableHead>
-            <TableHead className="text-muted-foreground">Precio Oro</TableHead>
-            <TableHead className="text-muted-foreground">Precio Dólar</TableHead>
-            <TableHead className="text-muted-foreground">Precio Final</TableHead>
-            <TableHead className="text-muted-foreground">Estado</TableHead>
-            <TableHead className="text-muted-foreground">Fecha</TableHead>
-            <TableHead className="text-muted-foreground text-right">Acciones</TableHead>
+            <TableHead className="text-muted-foreground">{t('orders.id')}</TableHead>
+            {showProvider && <TableHead className="text-muted-foreground">{t('orders.provider')}</TableHead>}
+            <TableHead className="text-muted-foreground">{t('orders.grams')}</TableHead>
+            <TableHead className="text-muted-foreground">{t('orders.negotiation')}</TableHead>
+            <TableHead className="text-muted-foreground">{t('orders.goldPrice')}</TableHead>
+            <TableHead className="text-muted-foreground">{t('orders.dollarPrice')}</TableHead>
+            <TableHead className="text-muted-foreground">{t('orders.finalPrice')}</TableHead>
+            <TableHead className="text-muted-foreground">{t('orders.status')}</TableHead>
+            <TableHead className="text-muted-foreground">{t('orders.date')}</TableHead>
+            <TableHead className="text-muted-foreground text-right">{t('common.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -79,7 +82,7 @@ export function OrdersTable({ orders, onViewOrder, onEditOrder, showProvider = t
                     order.status === 'completed' ? 'status-completed' : 'status-pending'
                   )}
                 >
-                  {order.status === 'completed' ? 'Completada' : 'Pendiente'}
+                  {order.status === 'completed' ? t('orders.statusCompleted') : t('orders.statusPending')}
                 </Badge>
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">
@@ -112,7 +115,7 @@ export function OrdersTable({ orders, onViewOrder, onEditOrder, showProvider = t
       
       {orders.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-muted-foreground">No hay órdenes para mostrar</p>
+          <p className="text-muted-foreground">{t('orders.noOrders')}</p>
         </div>
       )}
     </div>

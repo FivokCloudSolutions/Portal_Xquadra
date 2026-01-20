@@ -3,19 +3,21 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useOrders } from '@/hooks/useOrders';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { demoProviders } from '@/data/providers';
 import { Download, BarChart3, TrendingUp, DollarSign } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 export default function Reports() {
   const { orders } = useOrders();
+  const { t, language } = useLanguage();
   const [selectedProvider, setSelectedProvider] = useState<string>('all');
 
   // Generate chart data
   const chartData = orders
     .filter(o => o.status === 'completed')
     .map(o => ({
-      date: new Intl.DateTimeFormat('es-CO', { day: '2-digit', month: 'short' }).format(o.createdAt),
+      date: new Intl.DateTimeFormat(language === 'es' ? 'es-CO' : 'en-US', { day: '2-digit', month: 'short' }).format(o.createdAt),
       gramos: o.grams,
       valor: (o.finalPrice || 0) / 1000000,
     }))
@@ -48,19 +50,19 @@ export default function Reports() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="font-display text-3xl font-semibold text-foreground">
-              Reportes y Análisis
+              {t('reports.title')}
             </h1>
             <p className="mt-1 text-muted-foreground">
-              Estadísticas detalladas de operaciones
+              {t('reports.subtitle')}
             </p>
           </div>
           <div className="flex gap-3">
             <Select value={selectedProvider} onValueChange={setSelectedProvider}>
               <SelectTrigger className="w-48 bg-surface-2 border-border">
-                <SelectValue placeholder="Proveedor" />
+                <SelectValue placeholder={t('orders.provider')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los proveedores</SelectItem>
+                <SelectItem value="all">{t('reports.allProviders')}</SelectItem>
                 {demoProviders.map(p => (
                   <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                 ))}
@@ -68,7 +70,7 @@ export default function Reports() {
             </Select>
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
-              Exportar PDF
+              {t('common.exportPdf')}
             </Button>
           </div>
         </div>
@@ -78,9 +80,9 @@ export default function Reports() {
           <div className="surface-card p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Valor Total Transado</p>
+                <p className="text-sm text-muted-foreground">{t('reports.totalValue')}</p>
                 <p className="mt-1 font-display text-3xl font-semibold gold-text">
-                  {new Intl.NumberFormat('es-CO', {
+                  {new Intl.NumberFormat(language === 'es' ? 'es-CO' : 'en-US', {
                     style: 'currency',
                     currency: 'COP',
                     maximumFractionDigits: 0,
@@ -95,7 +97,7 @@ export default function Reports() {
           <div className="surface-card p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Gramos</p>
+                <p className="text-sm text-muted-foreground">{t('reports.totalGrams')}</p>
                 <p className="mt-1 font-display text-3xl font-semibold text-foreground">
                   {totalGrams.toFixed(2)}g
                 </p>
@@ -108,10 +110,10 @@ export default function Reports() {
           <div className="surface-card p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Precio Promedio/g</p>
+                <p className="text-sm text-muted-foreground">{t('reports.avgPrice')}</p>
                 <p className="mt-1 font-display text-3xl font-semibold text-foreground">
                   {totalGrams > 0
-                    ? new Intl.NumberFormat('es-CO', {
+                    ? new Intl.NumberFormat(language === 'es' ? 'es-CO' : 'en-US', {
                         style: 'currency',
                         currency: 'COP',
                         maximumFractionDigits: 0,
@@ -131,7 +133,7 @@ export default function Reports() {
           {/* Volume Chart */}
           <div className="surface-card p-6">
             <h3 className="mb-6 font-display text-lg font-semibold text-foreground">
-              Volumen de Operaciones
+              {t('reports.volumeChart')}
             </h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -167,7 +169,7 @@ export default function Reports() {
           {/* Provider Chart */}
           <div className="surface-card p-6">
             <h3 className="mb-6 font-display text-lg font-semibold text-foreground">
-              Valor por Proveedor (Millones COP)
+              {t('reports.providerChart')}
             </h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
